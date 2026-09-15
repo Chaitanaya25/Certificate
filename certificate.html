@@ -92,32 +92,32 @@ body{ display:flex; justify-content:center; align-items:flex-start; padding:24px
 .gg-crop img{ display:block; width:171px; margin-top:-46px; filter:brightness(0) invert(1); }
 
 .wordmark{
-  font-size:37px; font-weight:600; letter-spacing:-.005em;
+  font-size:30.5px; font-weight:600; letter-spacing:-.005em;
   line-height:1; margin-top:0;
 }
 .tagline{
   display:flex; align-items:center; gap:7px;
-  font-size:8.6px; font-weight:400; letter-spacing:.13em;
-  margin-top:1px; white-space:nowrap; color:#EDEBFF;
+  font-size:7.5px; font-weight:400; letter-spacing:.10em;
+  margin-top:3px; white-space:nowrap; color:#EDEBFF;
 }
 .tagline::before,.tagline::after{
-  content:""; height:1px; width:15px; background:rgba(255,255,255,.65);
+  content:""; height:1px; width:13px; background:rgba(255,255,255,.65);
 }
 
 .sect{ width:100%; }
 .hr{ width:100%; height:1px; background:var(--rule); border:0; }
 
 /* --- Ministry of Corporate Affairs (text only) --- */
-.ministry{ text-align:left; margin-top:16px; }
+.ministry{ text-align:left; margin-top:22px; }
 .ministry .m1{ font-size:15px; font-weight:400; line-height:1.3; }
 .ministry .m2{ font-size:11px; font-weight:300; margin-top:3px; color:#E4E1F6; }
 
 /* --- MSME: crop the supplied PNG to its wordmark block --- */
-.msme-crop{ width:152px; height:47px; overflow:hidden; margin:0 auto; }
-.msme-crop img{ display:block; width:152px; margin-top:-72px; filter:brightness(0) invert(1); }
+.msme-crop{ width:119px; height:51px; overflow:hidden; margin:0 auto; }
+.msme-crop img{ display:block; width:179px; margin:-88px 0 0 -30px; filter:brightness(0) invert(1); }
 .msme-strength{
   font-size:8.4px; font-weight:400; letter-spacing:.055em;
-  margin-top:7px; color:#EFEDFF;
+  margin-top:5px; color:#EFEDFF;
 }
 
 /* --- ISO row: inline-SVG green seal | rule | text --- */
@@ -128,28 +128,29 @@ body{ display:flex; justify-content:center; align-items:flex-start; padding:24px
 .iso-txt b{ display:block; font-size:12.5px; font-weight:500; letter-spacing:.015em; }
 .iso-txt span{ display:block; font-size:12.5px; font-weight:500; margin-top:5px; }
 
-/* --- DPIIT --- */
-.dpiit{
-  width:200px; height:auto; display:block; margin:0 auto;
+/* --- DPIIT: the PNG has huge transparent margins, so crop to the ink --- */
+.dpiit-crop{ width:177px; height:65px; overflow:hidden; margin:0 auto; }
+.dpiit-crop img{
+  display:block; width:292px; margin:-3px 0 0 -58px;
   /* black "DPIIT" -> white, while #startupindia keeps its orange */
   filter:invert(1) hue-rotate(180deg);
 }
 .dpiit-cap{
-  text-align:left; font-size:8.6px; font-weight:300; line-height:1.55;
-  margin-top:9px; color:#E4E1F6;
+  text-align:center; font-size:8.6px; font-weight:300; line-height:1.55;
+  margin:9px auto 0; width:177px; color:#E4E1F6;
 }
 
 /* --- verify card --- */
 .verify-card{
   margin-top:auto; margin-bottom:30px;
-  width:235px; margin-left:-11px;
+  width:235px; margin-left:-11px; align-self:flex-start;
   background:var(--violet-card);
   border-radius:9px;
-  padding:11px 12px 9px;
+  padding:8px 10px 6px;
 }
-.verify-top{ display:flex; gap:11px; text-align:left; }
+.verify-top{ display:flex; gap:10px; text-align:left; }
 .qr-ph{
-  flex:0 0 68px; width:68px; height:68px;
+  flex:0 0 78px; width:78px; height:80px;
   border:1px dashed rgba(255,255,255,.62);
   border-radius:4px;
   display:flex; align-items:center; justify-content:center;
@@ -160,7 +161,7 @@ body{ display:flex; justify-content:center; align-items:flex-start; padding:24px
 .verify-h{ font-size:9.4px; font-weight:600; letter-spacing:.055em; }
 .verify-p{ font-size:7.6px; font-weight:300; line-height:1.5; margin-top:4px; color:#EDEAFF; }
 .dice{
-  margin-top:9px; padding-top:8px;
+  margin-top:6px; padding-top:6px;
   border-top:1px solid rgba(255,255,255,.22);
   font-size:9.6px; font-weight:400; letter-spacing:.02em;
 }
@@ -175,11 +176,13 @@ body{ display:flex; justify-content:center; align-items:flex-start; padding:24px
 }
 .frame{ position:absolute; inset:16px; border:2px solid var(--gold-outer); pointer-events:none; }
 .frame-in{ position:absolute; inset:22px; border:1px solid var(--gold-inner); pointer-events:none; }
-.corner{ position:absolute; width:62px; height:62px; pointer-events:none; color:var(--gold-outer); }
-.corner.tl{ top:20px;    left:20px; }
-.corner.tr{ top:20px;    right:20px; transform:scaleX(-1); }
-.corner.bl{ bottom:20px; left:20px; transform:scaleY(-1); }
-.corner.br{ bottom:20px; right:20px; transform:scale(-1,-1); }
+/* side corner.png is a BOTTOM-RIGHT corner piece: its top-left quadrant is empty
+   and its arms run along the right and bottom edges. Flip from there. */
+.corner{ position:absolute; width:75px; height:75px; pointer-events:none; }
+.corner.br{ bottom:23px; right:23px; }
+.corner.bl{ bottom:23px; left:23px;  transform:scaleX(-1); }
+.corner.tr{ top:23px;    right:23px; transform:scaleY(-1); }
+.corner.tl{ top:23px;    left:23px;  transform:scale(-1,-1); }
 .wm{
   position:absolute; left:50%; top:53%;
   width:620px; height:620px; transform:translate(-50%,-50%);
@@ -259,7 +262,17 @@ h1.title{
 .sig .role{ font-size:14px; font-weight:500; color:var(--ink); margin-top:9px; letter-spacing:.015em; }
 .sig .org{ font-size:14px; font-weight:600; color:var(--indigo); margin-top:2px; }
 .seal{ flex:0 0 150px; display:flex; justify-content:center; align-items:flex-end; }
-.seal svg{ width:125px; height:132px; color:var(--indigo); }
+/* feather and star.png is steel blue (#003048); recolour it to the certificate's
+   indigo with a mask instead of a filter chain, so the match is exact and stays
+   crisp in print. Ink is 1141x1041 at (56,78) in a 1254 square -> crop to the ink. */
+.seal-wrap{ position:relative; width:125px; height:114px; overflow:hidden; }
+.seal-mark{
+  position:absolute; left:-6.1px; top:-8.5px; width:137px; height:137px;
+  background-color:var(--indigo);
+  -webkit-mask:url("./Images/feather%20and%20star.png") 0 0/137px 137px no-repeat;
+          mask:url("./Images/feather%20and%20star.png") 0 0/137px 137px no-repeat;
+}
+.seal-over{ position:absolute; inset:0; width:125px; height:114px; color:var(--indigo); overflow:visible; }
 
 /* ============================ PRINT ============================ */
 @page{ size:A4 landscape; margin:0; }
@@ -278,7 +291,7 @@ h1.title{
   <aside class="panel">
     <div class="gg-crop"><img src="./Images/GG.png" alt="GradGenious"></div>
     <div class="wordmark">GradGenious</div>
-    <div class="tagline">WHERE DEGREES BECOME DREAM JOES</div>
+    <div class="tagline">WHERE DEGREES BECOME DREAM JOBS</div>
 
     <div class="sect ministry">
       <div class="m1">Ministry of<br>Corporate Affairs</div>
@@ -292,7 +305,7 @@ h1.title{
       <div class="msme-strength">OUR STRENGTH &bull; हमारी शक्ति</div>
     </div>
 
-    <hr class="hr" style="margin-top:10px">
+    <hr class="hr" style="margin-top:8px">
 
     <div class="sect iso-row" style="margin-top:6px">
       <svg class="iso-seal" id="isoSeal" viewBox="0 0 100 100" aria-label="ISO 9001:2015 certified"></svg>
@@ -303,7 +316,7 @@ h1.title{
     <hr class="hr" style="margin-top:6px">
 
     <div class="sect" style="margin-top:11px">
-      <img class="dpiit" src="./Images/DPIIT%20%23startupindia%20logo.png" alt="DPIIT Startup India">
+      <div class="dpiit-crop"><img src="./Images/DPIIT%20%23startupindia%20logo.png" alt="DPIIT Startup India"></div>
       <div class="dpiit-cap">Department for Promotion of<br>Industry and Internal Trade<br>Government of India</div>
     </div>
 
@@ -324,10 +337,10 @@ h1.title{
     <svg class="wm" id="wmWreath" viewBox="0 0 400 400" aria-hidden="true"></svg>
     <div class="frame"></div>
     <div class="frame-in"></div>
-    <svg class="corner tl" viewBox="0 0 100 100" aria-hidden="true"><use href="#flourish"/></svg>
-    <svg class="corner tr" viewBox="0 0 100 100" aria-hidden="true"><use href="#flourish"/></svg>
-    <svg class="corner bl" viewBox="0 0 100 100" aria-hidden="true"><use href="#flourish"/></svg>
-    <svg class="corner br" viewBox="0 0 100 100" aria-hidden="true"><use href="#flourish"/></svg>
+    <img class="corner tl" src="./Images/side%20corner.png" alt="" aria-hidden="true">
+    <img class="corner tr" src="./Images/side%20corner.png" alt="" aria-hidden="true">
+    <img class="corner bl" src="./Images/side%20corner.png" alt="" aria-hidden="true">
+    <img class="corner br" src="./Images/side%20corner.png" alt="" aria-hidden="true">
 
     <div class="body">
       <h1 class="title">CERTIFICATE</h1>
@@ -367,7 +380,12 @@ h1.title{
           <div class="role">CEO AND FOUNDER</div>
           <div class="org">GradGenious</div>
         </div>
-        <div class="seal"><svg id="qualitySeal" viewBox="11 10 148 156" aria-hidden="true"></svg></div>
+        <div class="seal">
+          <div class="seal-wrap">
+            <div class="seal-mark"></div>
+            <svg class="seal-over" id="sealOver" viewBox="0 0 125 114" aria-hidden="true"></svg>
+          </div>
+        </div>
         <div class="sig">
           <span class="sig-crop sig-b"><img src="./Images/signature 2.png" alt=""></span>
           <div class="rule"></div>
@@ -382,20 +400,6 @@ h1.title{
 <!-- ================= inline SVG definitions ================= -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 
-  <!-- ornate corner flourish -->
-  <g id="flourish" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-    <path d="M2 34 C2 16 16 2 34 2"/>
-    <path d="M8 34 C8 19 19 8 34 8" stroke-width="1"/>
-    <path d="M34 8 C46 8 54 12 58 18 C61 23 58 28 53 27 C49 26 48 21 51 19 C54 17 58 19 59 23"/>
-    <path d="M8 34 C8 46 12 54 18 58 C23 61 28 58 27 53 C26 49 21 48 19 51 C17 54 19 58 23 59"/>
-    <path d="M22 22 C30 14 40 12 49 13" stroke-width="1"/>
-    <path d="M22 22 C14 30 12 40 13 49" stroke-width="1"/>
-    <path d="M30 16 C36 12 42 11 47 11.5" stroke-width=".8"/>
-    <path d="M16 30 C12 36 11 42 11.5 47" stroke-width=".8"/>
-    <circle cx="34" cy="34" r="2.1" fill="currentColor" stroke="none"/>
-    <path d="M34 34 C40 30 47 29 53 30" stroke-width=".9"/>
-    <path d="M34 34 C30 40 29 47 30 53" stroke-width=".9"/>
-  </g>
 
   <!-- dot-and-line ornament flanking the subtitle -->
   <g id="dotline" fill="currentColor">
@@ -497,18 +501,30 @@ h1.title{
   document.getElementById("wmWreath").innerHTML =
     wreath(200, 205, 155, 19, 44, 17, 0.42);
 
-  /* quality seal in the signature row */
-  document.getElementById("qualitySeal").innerHTML =
-    wreath(85, 92, 62, 14, 23, 9.5, 0.40) +
-    '<g fill="currentColor">' +
-      '<path d="M85 12 l3.2 6.5 7.1 1-5.1 5 1.2 7.1L85 28.3l-6.4 3.3 1.2-7.1-5.1-5 7.1-1z"/>' +
-      '<path d="M61 22 l2.5 5 5.4.8-3.9 3.8.9 5.4-4.9-2.6-4.9 2.6.9-5.4-3.9-3.8 5.4-.8z"/>' +
-      '<path d="M109 22 l2.5 5 5.4.8-3.9 3.8.9 5.4-4.9-2.6-4.9 2.6.9-5.4-3.9-3.8 5.4-.8z"/>' +
-    '</g>' +
+  /* Quality seal: the wreath itself is feather-and-star.png, masked to indigo by
+     .seal-mark. That PNG carries a single star sitting left of centre (x 50 of 125),
+     so two more are drawn here to make the trio the reference shows. Coordinates are
+     in the 125x114 ink box. */
+  function star(cx, cy, r){
+    var pts = "", i, a, rr;
+    for (i = 0; i < 10; i++){
+      a  = -Math.PI / 2 + i * Math.PI / 5;
+      rr = (i % 2 === 0) ? r : r * 0.42;
+      pts += (i ? " " : "") + (cx + Math.cos(a) * rr).toFixed(2) +
+             "," + (cy + Math.sin(a) * rr).toFixed(2);
+    }
+    return '<polygon points="' + pts + '"/>';
+  }
+
+  document.getElementById("sealOver").innerHTML =
+    '<g fill="currentColor">' + star(62.6, 6.6, 5.2) + star(74.4, 7.1, 4.0) + '</g>' +
     '<g fill="currentColor" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="600">' +
-      '<text x="85" y="80"  font-size="11" letter-spacing=".2">COMMITTED TO</text>' +
-      '<text x="85" y="100" font-size="14">QUALITY</text>' +
-      '<text x="85" y="119" font-size="14">EDUCATION</text>' +
+      /* sized to THIS wreath's opening, measured row by row: 82px wide at y46,
+         79px at y60, 72px at y73 (the supplied wreath has thicker leaves and so a
+         narrower opening than the reference's, which fits ~86px) */
+      '<text x="62.5" y="46" font-size="8.6"  letter-spacing=".7">COMMITTED TO</text>' +
+      '<text x="62.5" y="60" font-size="10.2" letter-spacing=".4">QUALITY</text>' +
+      '<text x="62.5" y="73" font-size="10.2" letter-spacing=".4">EDUCATION</text>' +
     '</g>';
 
   /* green ISO 9001:2015 seal (the supplied PNG is a blue globe, not this badge) */
