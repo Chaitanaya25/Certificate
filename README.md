@@ -62,17 +62,30 @@ path — no code change needed.
 | `MIDDLE THING.png` | The name-divider flourish, 54 × 30, already gold — no recolour |
 | `feather new thing.png` | The quality seal — a complete wreath with both branches, all three stars and the crossed stems in one image. Used as a `mask-image` with `background-color: var(--indigo)` because the artwork is steel blue (`#0C375D`). **Never transform it** — it is used at its native orientation; any flip puts the stars at the bottom |
 | `signature 1.png` / `signature 2.png` | Cropped to their ink so they sit on the rule; left unfiltered (black on white paper) |
-| `LEFT SIDE LEAF THING.png` / `RIGHT SIDE LEAF THING.png` | **Not used** — superseded by `feather new thing.png`. They were single branches that had to be mirrored into a wreath, which left an open V rather than a closed one |
+| `LEFT SIDE LEAF THING.png` / `RIGHT SIDE LEAF THING.png` | The faint background watermark — one element each, **at native orientation with no transform**. They are drawn as a genuine pair (LEFT bows left, RIGHT bows right, both tips-up/stem-down), so no mirroring is needed or wanted; flipping either one would invert it. Recoloured by mask to `var(--watermark)`. Each gets its own `mask-size`/`mask-position` because the files are not the same scale — ink 827×1892 vs 639×1772, and RIGHT carries large transparent margins a bare `contain` would leave in |
 | `ISO 9001 2015 Certification Logo.png` | **Not used** — a blue globe wordmark, while the reference shows a green certified seal, drawn as inline SVG instead |
 | `Ministry_of_Corporate_Affairs_India.svg.webp` | **Not used** — superseded by `EMBLEM.png` plus HTML text. Its emblem (29.6% white fill) and "MCA" boxes (19.1% knocked-out letters) cannot be filtered white without destroying them |
 
 ## The frame
 
-Two plain inset borders — `.frame` at 16px / 2px `#BB7434`, `.frame-in` at 22px / 1px
-`#B5885F` — both measured from `certificate 1.jpeg`. They run as continuous
-rectangles and the corner ornament simply layers on top, which is how the reference is
-built. The corner images sit 15px in from each edge, which brings the ornament's tips
-onto the inner rule so it tucks into the corner rather than floating inside it.
+The rules stop short at every corner and the ornament owns that space. This is what
+`certificate 1.jpeg` does: scanning each of its rules for contiguous gold shows the
+rule absent for the corner-most ~50–62px, with only fragmented ornament ink there.
+
+A CSS `border` cannot do that — it draws a closed rectangle straight through the
+ornament — so the frame is **eight bars** (`.fr-ot/.fr-ob/.fr-ol/.fr-or` outer,
+`.fr-it/.fr-ib/.fr-il/.fr-ir` inner). Rule geometry is still the reference's: outer
+16px inset / 2px `#BB7434`, inner 22px / 1px `#B5885F`.
+
+The gap size is set by our ornament, which is bigger than the reference's. At 76px
+with a 15px offset its ink spans 21.6–79.6px horizontally and 22.0–80.8px vertically
+from each face corner, so the horizontal bars clear 80px and the vertical bars 81px.
+**Resizing or repositioning the corners means recomputing those two numbers**, or the
+rules will overlap the scrollwork again.
+
+The eight class names are deliberately distinct singles rather than compounds like
+`.fr.r` — an earlier revision used that form and `.r` silently collided with another
+element's class, restyling it.
 
 Known placeholders in the current artwork: `GG.png` is a plain black monogram rather
 than the reference's purple graduation-cap mark, and `signature 1.png` is literally
