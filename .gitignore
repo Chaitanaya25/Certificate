@@ -1,0 +1,20 @@
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+*.swp
+*.swo
+
+# Claude Code local state (usually shouldn't be pushed)
+.claude/
+
+# Logs
+*.log
+
+# Temp/backup files
+*.bak
+*.tmp
+~$*
