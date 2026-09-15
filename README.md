@@ -55,22 +55,39 @@ path — no code change needed.
 | Path | Notes |
 |---|---|
 | `GG.png` | Cropped to its ink and filtered to white for the indigo panel |
+| `EMBLEM.png` | Ashoka Lion Capital beside the Ministry text. Rendered with `filter:invert(1)` + `mix-blend-mode:screen`, **not** `brightness(0) invert(1)` — it is black line art with 41.2% opaque white fill, so the plain filter would flatten it to a featureless white blob. invert turns the lines white and the fill black; screen then drops the black to transparent |
 | `MSME India Logo.png` | Cropped to the wordmark block (the emblem above it is trimmed), filtered white |
-| `DPIIT #startupindia logo.png` | Referenced as `DPIIT%20%23startupindia%20logo.png` — the `#` **must** stay percent-encoded as `%23` or the browser reads it as a URL fragment and the image silently fails to load. Also cropped: the ink occupies only x 723–2941 of a 3664px canvas, so an uncropped `width:` renders a much smaller logo than you'd expect |
-| `side corner.png` | The four frame corners. **It is a bottom-right corner piece** — its top-left quadrant is completely empty and its arms run along the right and bottom edges. Flips: BR none, BL `scaleX(-1)`, TR `scaleY(-1)`, TL `scale(-1,-1)`. No filter; already gold |
-| `feather and star.png` | The quality seal. Used as a `mask-image` with `background-color: var(--indigo)` rather than an `<img>`, because the artwork is steel blue (`#003048`) and the certificate is indigo (`#10084F`). It carries one star left of centre; two more are drawn as inline SVG so the top reads as three |
+| `DPIIT #startupindia logo.png` | Referenced as `DPIIT%20%23startupindia%20logo.png` — the `#` **must** stay percent-encoded as `%23` or the browser reads it as a URL fragment and the image silently fails to load. Also cropped: the ink occupies only x 723–2941 of a 3664px canvas |
+| `SIDE FINAL PART.png` | The four frame corners, at 89px. **It is a bottom-right corner piece** — its top-left quadrant has zero ink, its double tabs cross the top edge (continuing as the right-hand rules) and the left edge (continuing as the bottom rules). Flips: BR none, BL `scaleX(-1)`, TR `scaleY(-1)`, TL `scale(-1,-1)` |
+| `MIDDLE THING.png` | The name-divider flourish, 54 × 30, already gold — no recolour |
+| `LEFT SIDE LEAF THING.png` | The quality seal, used **twice** — once plain, once `scaleX(-1)` — as a `mask-image` with `background-color: var(--indigo)`, since the artwork is navy. No stars: none is baked into the asset and none is fabricated |
+| `RIGHT SIDE LEAF THING.png` | **Not used.** It is not a clean mirror of the left branch (ink 639×1772 vs 827×1892, aspects 0.361 vs 0.437, 17.9% silhouette disagreement), so pairing the two gave a visibly lopsided wreath. Mirroring the left branch gives a symmetric one |
 | `signature 1.png` / `signature 2.png` | Cropped to their ink so they sit on the rule; left unfiltered (black on white paper) |
-| `ISO 9001 2015 Certification Logo.png` | **Not used** — it is a blue globe wordmark, while the reference shows a green certified seal, which is drawn as inline SVG instead |
-| `Ministry_of_Corporate_Affairs_India.svg.webp` | **Not used.** It is not single-tone: the Ashoka emblem is 29.6% white fill between its navy lines and the "MCA" boxes are 19.1% white knocked-out letters. `brightness(0) invert(1)` maps every opaque pixel to white, so it would flatten the emblem to a solid white blob and the boxes to three blank rectangles. The Ministry block stays as white HTML text, which matches the reference anyway |
+| `side corner.png` | **Superseded** by `SIDE FINAL PART.png` |
+| `feather and star.png` | **Superseded** by the two-branch seal |
+| `ISO 9001 2015 Certification Logo.png` | **Not used** — a blue globe wordmark, while the reference shows a green certified seal, drawn as inline SVG instead |
+| `Ministry_of_Corporate_Affairs_India.svg.webp` | **Not used** — superseded by `EMBLEM.png` plus HTML text. Its emblem (29.6% white fill) and "MCA" boxes (19.1% knocked-out letters) cannot be filtered white without destroying them |
 
-Known placeholders in the current artwork: `GG.png` is a plain black monogram
-rather than the reference's purple graduation-cap mark, and `signature 1.png` is
-literally the word "Signature". Both are positioned and sized correctly, so real
-artwork drops straight in.
+## How the frame meets the corners
 
-The remaining decorative elements — the double gold frame, the subtitle ornaments,
-the name divider, the laurel watermark, the seal's stars and the green ISO seal — are
-inline SVG, so they stay crisp at any print resolution.
+`SIDE FINAL PART.png` carries the frame's double rules as baked-in tabs, so the
+straight rules are **eight absolutely-positioned bars** (`.fr`), not two bordered
+boxes — a border draws a closed rectangle and would run straight through the
+ornaments. Each bar stops 89px from its edge, exactly where the corner image begins,
+and the ornament's own tab continues the line.
+
+At 89px the tabs land 16.0 / 22.1px (vertical) and 16.0 / 21.4px (horizontal) from
+the `.face` edge, which is where `certificate 1.jpeg` has its rules. The bars are
+`#CE6B0C` — **sampled from the asset's own tabs**; the reference's copper
+`#BB7434` / `#B5885F` would leave a visible colour seam at every junction.
+
+If you ever resize the corners, the bar offsets and thicknesses must be recomputed
+from the tab geometry, or the junction breaks.
+
+Known placeholders in the current artwork: `GG.png` is a plain black monogram rather
+than the reference's purple graduation-cap mark, and `signature 1.png` is literally
+the word "Signature". Both are positioned and sized correctly, so real artwork drops
+straight in.
 
 ## Things deliberately different from the reference JPEGs
 
@@ -79,12 +96,18 @@ inline SVG, so they stay crisp at any print resolution.
   breaks are identical and the extra height becomes slightly more generous leading.
 - **Ministry of Corporate Affairs block** is text only (see the asset table above).
 - **ISO badge** is drawn as SVG rather than using the supplied blue PNG.
-- **Corner ornaments are larger than the reference's.** The reference's own flourishes
-  are only 34×34px at A4 scale; `side corner.png` is an elaborate sweeping flourish
-  that is illegible that small, so it is set at ~70px.
-- **The seal's text is smaller than the reference's.** The supplied wreath has thicker
-  leaves and so a narrower opening (82px at the "COMMITTED TO" row) than the reference
-  wreath, which fits ~86px. The text is sized to the wreath actually in use.
+- **The frame is a brighter orange than the reference's copper.** The corner asset's
+  baked tabs are `#CE6B0C`; the rules must match them exactly or every junction shows
+  a seam, so the whole frame follows the asset rather than the reference.
+- **Corner ornaments are larger than the reference's** (~57×61px of scrollwork against
+  the reference's 34×34), and the new artwork replaces the reference's plain mitred
+  corner with scrollwork.
+- **The seal is an open V, not a closed wreath.** Two single-branch assets with no
+  crossing element leave the stem bases ~27px apart, where the reference's branches
+  cross at the bottom.
+- **The divider ornament is narrower and taller than the reference's** (54×30 against
+  90×22) — the supplied flourish is aspect 1.79 where the reference's is 4.1 — and it
+  is a brighter yellow-gold than the tan hairline it sits on.
 - **The tagline reads "DREAM JOBS".** The reference JPEGs themselves read "DREAM JOES";
   this is a deliberate typo correction.
 

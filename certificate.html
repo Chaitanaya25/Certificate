@@ -36,6 +36,9 @@ const CERT = {
   --ink:           #111111;
   --gold-outer:    #BB7434;
   --gold-inner:    #B5885F;
+  /* both frame rules must match SIDE FINAL PART.png's baked tabs exactly, or the
+     junction shows a colour seam. Sampled from all four tabs: #CE6B0C. */
+  --gold-frame:    #CE6B0C;
   --gold-hair:     #A99072;
   --violet-card:   #4C34A2;
   --rule:          #3D2E8B;
@@ -108,7 +111,14 @@ body{ display:flex; justify-content:center; align-items:flex-start; padding:24px
 .hr{ width:100%; height:1px; background:var(--rule); border:0; }
 
 /* --- Ministry of Corporate Affairs (text only) --- */
-.ministry{ text-align:left; margin-top:22px; }
+/* EMBLEM.png is black line art with OPAQUE WHITE fill between the lines, so
+   brightness(0) invert(1) would flatten it to a featureless white blob. invert(1)
+   makes the lines white and the fill black; screen then drops the black out. */
+.ministry{ display:flex; align-items:center; gap:14px; text-align:left; margin-top:19px; }
+.ministry img{
+  width:41px; height:62px; flex:0 0 41px; object-fit:contain;
+  filter:invert(1); mix-blend-mode:screen;
+}
 .ministry .m1{ font-size:15px; font-weight:400; line-height:1.3; }
 .ministry .m2{ font-size:11px; font-weight:300; margin-top:3px; color:#E4E1F6; }
 
@@ -174,15 +184,29 @@ body{ display:flex; justify-content:center; align-items:flex-start; padding:24px
   /* asymmetric side padding reproduces the reference's off-centre axis */
   padding:46px 68px 59px 46px;
 }
-.frame{ position:absolute; inset:16px; border:2px solid var(--gold-outer); pointer-events:none; }
-.frame-in{ position:absolute; inset:22px; border:1px solid var(--gold-inner); pointer-events:none; }
-/* side corner.png is a BOTTOM-RIGHT corner piece: its top-left quadrant is empty
-   and its arms run along the right and bottom edges. Flip from there. */
-.corner{ position:absolute; width:75px; height:75px; pointer-events:none; }
-.corner.br{ bottom:23px; right:23px; }
-.corner.bl{ bottom:23px; left:23px;  transform:scaleX(-1); }
-.corner.tr{ top:23px;    right:23px; transform:scaleY(-1); }
-.corner.tl{ top:23px;    left:23px;  transform:scale(-1,-1); }
+/* SIDE FINAL PART.png is a BOTTOM-RIGHT corner piece (its top-left quadrant is
+   empty) and carries the frame's double rules as baked-in tabs: the vertical pair
+   crosses its TOP edge, the horizontal pair crosses its LEFT edge. At 89px the tabs
+   land at 16.0 / 22.1 (vertical) and 16.0 / 21.4 (horizontal) from the face edge —
+   i.e. exactly on the reference's frame — given the offsets below. */
+.corner{ position:absolute; width:89px; height:89px; pointer-events:none; }
+.corner.br{ bottom:0; right:2.5px; }
+.corner.bl{ bottom:0; left:2.5px;  transform:scaleX(-1); }
+.corner.tr{ top:0;    right:2.5px; transform:scaleY(-1); }
+.corner.tl{ top:0;    left:2.5px;  transform:scale(-1,-1); }
+
+/* The straight rules are eight bars, not two bordered boxes: a border would draw a
+   closed rectangle straight through the ornaments. Each bar stops at the corner box
+   (89px from its edge) so the ornament's own tab continues the line seamlessly. */
+.fr{ position:absolute; pointer-events:none; background:var(--gold-frame); }
+.fr.t,.fr.b{ left:91.5px; right:91.5px; height:1.9px; }
+.fr.l,.fr.r{ top:89px;    bottom:89px; width:1.85px; }
+.fr.t{ top:15.1px; }      .fr.b{ bottom:15.1px; }
+.fr.l{ left:15.1px; }     .fr.r{ right:15.1px; }
+.fr.i.t,.fr.i.b{ height:1.8px; }
+.fr.i.l,.fr.i.r{ width:1.7px; }
+.fr.i.t{ top:20.6px; }    .fr.i.b{ bottom:20.6px; }
+.fr.i.l{ left:21.2px; }   .fr.i.r{ right:21.2px; }
 .wm{
   position:absolute; left:50%; top:53%;
   width:620px; height:620px; transform:translate(-50%,-50%);
@@ -217,9 +241,11 @@ h1.title{
   font-weight:400; font-size:74px; line-height:1.1;
   color:var(--indigo); text-align:center; margin-top:10px;
 }
-.divider{ display:flex; align-items:center; justify-content:center; margin-top:0; }
+/* explicit height so the 30px ornament overflows symmetrically instead of growing
+   the row and shifting everything below it */
+.divider{ display:flex; align-items:center; justify-content:center; margin-top:0; height:20px; }
 .divider .line{ flex:1; height:1px; background:var(--gold-hair); max-width:200px; }
-.divider .dia{ flex:0 0 70px; height:20px; color:var(--gold-hair); margin:0 6px; }
+.divider .dia{ flex:0 0 54px; width:54px; height:30px; margin:0 6px; object-fit:contain; }
 
 .lead{ text-align:center; margin-top:11px; font-size:15px; font-weight:400; color:var(--ink); }
 
@@ -262,17 +288,23 @@ h1.title{
 .sig .role{ font-size:14px; font-weight:500; color:var(--ink); margin-top:9px; letter-spacing:.015em; }
 .sig .org{ font-size:14px; font-weight:600; color:var(--indigo); margin-top:2px; }
 .seal{ flex:0 0 150px; display:flex; justify-content:center; align-items:flex-end; }
-/* feather and star.png is steel blue (#003048); recolour it to the certificate's
-   indigo with a mask instead of a filter chain, so the match is exact and stays
-   crisp in print. Ink is 1141x1041 at (56,78) in a 1254 square -> crop to the ink. */
-.seal-wrap{ position:relative; width:125px; height:114px; overflow:hidden; }
-.seal-mark{
-  position:absolute; left:-6.1px; top:-8.5px; width:137px; height:137px;
+/* One branch asset used twice (the supplied left/right pair are not true mirrors:
+   17.9% silhouette disagreement), the right copy flipped, for a symmetric wreath.
+   Recoloured to indigo with a mask, as the artwork is navy. No stars: neither asset
+   has one baked in and none is fabricated.
+   The 22px gap is load-bearing — edge-to-edge the opening is only ~55px, but
+   "COMMITTED TO" is 71px wide. Measured at the three text rows, gap 22 leaves
+   81 / 82 / 73px of opening. */
+.seal-wrap{ position:relative; width:129px; height:122px; }
+.branch{
+  position:absolute; top:0; width:53.3px; height:122px;
   background-color:var(--indigo);
-  -webkit-mask:url("./Images/feather%20and%20star.png") 0 0/137px 137px no-repeat;
-          mask:url("./Images/feather%20and%20star.png") 0 0/137px 137px no-repeat;
+  -webkit-mask:url("./Images/LEFT%20SIDE%20LEAF%20THING.png") center/contain no-repeat;
+          mask:url("./Images/LEFT%20SIDE%20LEAF%20THING.png") center/contain no-repeat;
 }
-.seal-over{ position:absolute; inset:0; width:125px; height:114px; color:var(--indigo); overflow:visible; }
+.branch.l{ left:0; }
+.branch.r{ right:0; transform:scaleX(-1); }
+.seal-over{ position:absolute; inset:0; width:129px; height:122px; color:var(--indigo); overflow:visible; }
 
 /* ============================ PRINT ============================ */
 @page{ size:A4 landscape; margin:0; }
@@ -294,8 +326,11 @@ h1.title{
     <div class="tagline">WHERE DEGREES BECOME DREAM JOBS</div>
 
     <div class="sect ministry">
-      <div class="m1">Ministry of<br>Corporate Affairs</div>
-      <div class="m2">Government of India</div>
+      <img src="./Images/EMBLEM.png" alt="" aria-hidden="true">
+      <div>
+        <div class="m1">Ministry of<br>Corporate Affairs</div>
+        <div class="m2">Government of India</div>
+      </div>
     </div>
 
     <hr class="hr" style="margin-top:17px">
@@ -335,12 +370,12 @@ h1.title{
   <!-- ===================== RIGHT PANEL ===================== -->
   <main class="face">
     <svg class="wm" id="wmWreath" viewBox="0 0 400 400" aria-hidden="true"></svg>
-    <div class="frame"></div>
-    <div class="frame-in"></div>
-    <img class="corner tl" src="./Images/side%20corner.png" alt="" aria-hidden="true">
-    <img class="corner tr" src="./Images/side%20corner.png" alt="" aria-hidden="true">
-    <img class="corner bl" src="./Images/side%20corner.png" alt="" aria-hidden="true">
-    <img class="corner br" src="./Images/side%20corner.png" alt="" aria-hidden="true">
+    <div class="fr t"></div><div class="fr b"></div><div class="fr l"></div><div class="fr r"></div>
+    <div class="fr i t"></div><div class="fr i b"></div><div class="fr i l"></div><div class="fr i r"></div>
+    <img class="corner tl" src="./Images/SIDE%20FINAL%20PART.png" alt="" aria-hidden="true">
+    <img class="corner tr" src="./Images/SIDE%20FINAL%20PART.png" alt="" aria-hidden="true">
+    <img class="corner bl" src="./Images/SIDE%20FINAL%20PART.png" alt="" aria-hidden="true">
+    <img class="corner br" src="./Images/SIDE%20FINAL%20PART.png" alt="" aria-hidden="true">
 
     <div class="body">
       <h1 class="title">CERTIFICATE</h1>
@@ -356,7 +391,7 @@ h1.title{
 
       <div class="divider">
         <div class="line"></div>
-        <svg class="dia" viewBox="0 0 120 36" aria-hidden="true"><use href="#diamond"/></svg>
+        <img class="dia" src="./Images/MIDDLE%20THING.png" alt="" aria-hidden="true">
         <div class="line"></div>
       </div>
 
@@ -382,8 +417,9 @@ h1.title{
         </div>
         <div class="seal">
           <div class="seal-wrap">
-            <div class="seal-mark"></div>
-            <svg class="seal-over" id="sealOver" viewBox="0 0 125 114" aria-hidden="true"></svg>
+            <div class="branch l"></div>
+            <div class="branch r"></div>
+            <svg class="seal-over" id="sealOver" viewBox="0 0 129 122" aria-hidden="true"></svg>
           </div>
         </div>
         <div class="sig">
@@ -407,15 +443,6 @@ h1.title{
     <circle cx="6" cy="6" r="3.6"/>
   </g>
 
-  <!-- diamond + scroll ornament centred on the name divider -->
-  <g id="diamond" fill="none" stroke="currentColor" stroke-width="1.2">
-    <path d="M60 8 L70 18 L60 28 L50 18 Z"/>
-    <path d="M60 13.5 L64.5 18 L60 22.5 L55.5 18 Z" fill="currentColor" stroke="none"/>
-    <path d="M50 18 C42 18 40 12 33 12 C27 12 25 16 28 18 C25 20 27 24 33 24 C40 24 42 18 50 18"/>
-    <path d="M70 18 C78 18 80 12 87 12 C93 12 95 16 92 18 C95 20 93 24 87 24 C80 24 78 18 70 18"/>
-    <circle cx="26" cy="18" r="1.4" fill="currentColor" stroke="none"/>
-    <circle cx="94" cy="18" r="1.4" fill="currentColor" stroke="none"/>
-  </g>
 
 </defs></svg>
 
@@ -501,30 +528,15 @@ h1.title{
   document.getElementById("wmWreath").innerHTML =
     wreath(200, 205, 155, 19, 44, 17, 0.42);
 
-  /* Quality seal: the wreath itself is feather-and-star.png, masked to indigo by
-     .seal-mark. That PNG carries a single star sitting left of centre (x 50 of 125),
-     so two more are drawn here to make the trio the reference shows. Coordinates are
-     in the 125x114 ink box. */
-  function star(cx, cy, r){
-    var pts = "", i, a, rr;
-    for (i = 0; i < 10; i++){
-      a  = -Math.PI / 2 + i * Math.PI / 5;
-      rr = (i % 2 === 0) ? r : r * 0.42;
-      pts += (i ? " " : "") + (cx + Math.cos(a) * rr).toFixed(2) +
-             "," + (cy + Math.sin(a) * rr).toFixed(2);
-    }
-    return '<polygon points="' + pts + '"/>';
-  }
-
+  /* Quality seal: two copies of one laurel branch (see .branch), the right one
+     mirrored. No stars are drawn - neither supplied branch has one baked in, so none
+     is fabricated. Text is sized to the opening this wreath actually leaves:
+     82px at y46, 74px at y60, 71px at y74. */
   document.getElementById("sealOver").innerHTML =
-    '<g fill="currentColor">' + star(62.6, 6.6, 5.2) + star(74.4, 7.1, 4.0) + '</g>' +
     '<g fill="currentColor" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="600">' +
-      /* sized to THIS wreath's opening, measured row by row: 82px wide at y46,
-         79px at y60, 72px at y73 (the supplied wreath has thicker leaves and so a
-         narrower opening than the reference's, which fits ~86px) */
-      '<text x="62.5" y="46" font-size="8.6"  letter-spacing=".7">COMMITTED TO</text>' +
-      '<text x="62.5" y="60" font-size="10.2" letter-spacing=".4">QUALITY</text>' +
-      '<text x="62.5" y="73" font-size="10.2" letter-spacing=".4">EDUCATION</text>' +
+      '<text x="64.5" y="50" font-size="8.6"  letter-spacing=".4">COMMITTED TO</text>' +
+      '<text x="64.5" y="64" font-size="10.2" letter-spacing=".4">QUALITY</text>' +
+      '<text x="64.5" y="76" font-size="10.2" letter-spacing=".4">EDUCATION</text>' +
     '</g>';
 
   /* green ISO 9001:2015 seal (the supplied PNG is a blue globe, not this badge) */
