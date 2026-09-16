@@ -184,16 +184,21 @@ body{ display:flex; justify-content:center; align-items:flex-start; padding:24px
 /* The rules stop short at every corner and the ornament owns that space, which is what
    certificate 1.jpeg does: scanning its rules for contiguous gold shows each one absent
    for the corner-most ~50-62px. A border cannot do this - it draws a closed rectangle -
-   so the frame is eight bars. Our ornament is bigger than the reference's: at 76px with
-   a 15px offset its ink spans 21.6-79.6px horizontally and 22.0-80.8px vertically from
-   each face corner, so the bars clear 80 / 81px.
+   so the frame is eight bars. Each bar stops where the ornament's ink actually meets
+   THAT bar's own band, not where the ornament's overall bbox ends - measuring against
+   the bbox left a band of blank paper between the rule and the scrollwork.
    Class names are eight distinct singles on purpose - the compound .fr.r form used
    earlier collided with another element's .r and silently restyled it. */
 .fr{ position:absolute; pointer-events:none; }
 .fr-ot,.fr-ob,.fr-ol,.fr-or{ background:var(--gold-outer); }
 .fr-it,.fr-ib,.fr-il,.fr-ir{ background:var(--gold-inner); }
-.fr-ot,.fr-ob,.fr-it,.fr-ib{ left:80px; right:80px; }
-.fr-ol,.fr-or,.fr-il,.fr-ir{ top:81px;  bottom:81px; }
+/* measured at the 3px corner offset: the ornament's ink inside the outer rule band
+   runs to 67.6 (horizontal) / 68.4 (vertical), and inside the inner band to
+   55.8 / 56.9 - so the bars meet the scrollwork flush */
+.fr-ot,.fr-ob{ left:68px; right:68px; }
+.fr-ol,.fr-or{ top:69px;  bottom:69px; }
+.fr-it,.fr-ib{ left:56px; right:56px; }
+.fr-il,.fr-ir{ top:57px;  bottom:57px; }
 .fr-ot,.fr-ob{ height:2px; }   .fr-ol,.fr-or{ width:2px; }
 .fr-it,.fr-ib{ height:1px; }   .fr-il,.fr-ir{ width:1px; }
 .fr-ot{ top:16px; }   .fr-ob{ bottom:16px; }
@@ -201,16 +206,18 @@ body{ display:flex; justify-content:center; align-items:flex-start; padding:24px
 .fr-it{ top:22px; }   .fr-ib{ bottom:22px; }
 .fr-il{ left:22px; }  .fr-ir{ right:22px; }
 
-/* new coner.png is a BOTTOM-RIGHT corner piece: its top-left quadrant has zero ink,
-   so the dense scrollwork is what hugs the page corner. Its ink sits inset inside its
-   own canvas (margins R 108 / B 114 of 1254 = 6.5 / 6.9px at this size), so a box
-   offset of 15px brings the ornament's tips onto the inner rule, tucked into the
-   corner the way certificate 1.jpeg has it. */
+/* new coner.png is a BOTTOM-RIGHT corner piece: its top-left quadrant has zero ink
+   (quadrant counts TL 0 / TR 4797 / BL 5345 / BR 8827), so the dense scrollwork hugs
+   the page corner and the empty quadrant faces the page interior.
+   Its ink sits inset inside its own canvas (margins R 108 / B 114 of 1254 = 6.5 / 6.9px
+   at this size), so a 3px box offset puts the nearest ink 9.6 / 10.0px from the corner
+   point - matching the reference's 8.2-12.7px - and carries the scrollwork across both
+   rule bands, so rule and ornament read as one continuous unit. */
 .corner{ position:absolute; width:76px; height:76px; pointer-events:none; }
-.corner.br{ bottom:15px; right:15px; }
-.corner.bl{ bottom:15px; left:15px;  transform:scaleX(-1); }
-.corner.tr{ top:15px;    right:15px; transform:scaleY(-1); }
-.corner.tl{ top:15px;    left:15px;  transform:scale(-1,-1); }
+.corner.br{ bottom:3px; right:3px; }
+.corner.bl{ bottom:3px; left:3px;  transform:scaleX(-1); }
+.corner.tr{ top:3px;    right:3px; transform:scaleY(-1); }
+.corner.tl{ top:3px;    left:3px;  transform:scale(-1,-1); }
 /* Two separate branch files at their NATIVE orientation - no transform anywhere.
    They are drawn as a genuine pair: LEFT bows left (x-centre 478 -> 242 -> 584 down
    its length) and RIGHT bows right (306 -> 505 -> 170), both with leaf tips up and the
@@ -220,18 +227,23 @@ body{ display:flex; justify-content:center; align-items:flex-start; padding:24px
    own mask-size and mask-position derived from its own ink box; RIGHT in particular
    carries large transparent margins (L73 R117 T52 B74) that a bare `contain` would
    leave in. At equal height LEFT's ink is ~227px wide and RIGHT's ~188px. */
+/* the box spans the full face so the leaves are offset from the page edges directly.
+   Offsets are set for EQUAL BREATHING ROOM rather than equal outer margin: across the
+   text rows the left branch's deepest inward ink is 124.5px from its own box edge and
+   the right branch's is 97.1px, so 10px / 38px put both innermost tips ~135px from
+   their respective edges, clear of the text block (which spans ~157-681px). */
 .wm{
-  position:absolute; left:calc(50% - 310px); top:calc(53% - 310px);
-  width:620px; height:620px; pointer-events:none;
+  position:absolute; left:0; right:0; top:calc(53% - 310px);
+  height:620px; pointer-events:none;
 }
 .wm-leaf{ position:absolute; top:50px; height:520px; background-color:var(--watermark); }
 .wm-leaf.l{
-  left:141px; width:227.3px;
+  left:10px; width:227.3px;
   -webkit-mask:url("./Images/LEFT%20SIDE%20LEAF%20THING.png") -0.3px -1.7px / 227.8px 521.6px no-repeat;
           mask:url("./Images/LEFT%20SIDE%20LEAF%20THING.png") -0.3px -1.7px / 227.8px 521.6px no-repeat;
 }
 .wm-leaf.r{
-  right:141px; width:187.5px;
+  right:38px; width:187.5px;
   -webkit-mask:url("./Images/RIGHT%20SIDE%20LEAF%20THING.png") -21.4px -15.3px / 243.3px 557px no-repeat;
           mask:url("./Images/RIGHT%20SIDE%20LEAF%20THING.png") -21.4px -15.3px / 243.3px 557px no-repeat;
 }
